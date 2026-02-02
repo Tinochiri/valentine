@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine Mission 💘</title>
+
+  <style>
+    :root {
+      --bg1: #0b0b12;
+      --bg2: #1b0b1a;
+      --card: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.14);
+      --text: rgba(255,255,255,0.95);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 20%, #ff2d7a44, transparent 60%),
+        radial-gradient(1200px 800px at 80% 80%, #8a2be244, transparent 60%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow: hidden;
+    }
+
+    .card {
+      width: min(560px, 92vw);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px 22px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(22px, 5vw, 34px);
+    }
+
+    p {
+      margin: 0 0 18px;
+      opacity: 0.9;
+    }
+
+    .arena {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255,255,255,0.22);
+      background: rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+
+    .btn {
+      position: absolute;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      user-select: none;
+      min-width: 120px;
+    }
+
+    #yes {
+      background: linear-gradient(135deg, #ff3b8d, #ff6b3d);
+      color: white;
+      left: 20px;
+      top: 140px;
+      box-shadow: 0 10px 28px rgba(255,59,141,.5);
+    }
+
+    #no {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      right: 20px;
+      top: 140px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .result {
+      margin-top: 16px;
+      font-size: 16px;
+      min-height: 22px;
+    }
+
+    .tiny {
+      margin-top: 10px;
+      font-size: 13px;
+      opacity: .75;
+    }
+
+    .heart {
+      position: fixed;
+      font-size: 26px;
+      animation: fall 4s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      from { transform: translateY(-50px); opacity: 1; }
+      to { transform: translateY(100vh); opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Will you be my Valentine? 💘</h1>
+    <p>Choose wisely… one option is feeling shy today 😭</p>
+
+    <div class="arena" id="arena">
+      <button class="btn" id="yes">YES 😍</button>
+      <button class="btn" id="no">no 🙃</button>
+    </div>
+
+    <div class="result" id="result"></div>
+    <div class="tiny">Tip: try to catch the YES button 👀</div>
+  </div>
+
+  <script>
+    const arena = document.getElementById("arena");
+    const yesBtn = document.getElementById("yes");
+    const noBtn = document.getElementById("no");
+    const result = document.getElementById("result");
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function flee() {
+      const a = arena.getBoundingClientRect();
+      const b = yesBtn.getBoundingClientRect();
+      const padding = 10;
+
+      const maxX = a.width - b.width - padding;
+      const maxY = a.height - b.height - padding;
+
+      const x = Math.random() * maxX + padding;
+      const y = Math.random() * maxY + padding;
+
+      yesBtn.style.left = clamp(x, padding, maxX) + "px";
+      yesBtn.style.top  = clamp(y, padding, maxY) + "px";
+    }
+
+    yesBtn.addEventListener("mouseenter", flee);
+
+    arena.addEventListener("touchmove", (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+
+      const b = yesBtn.getBoundingClientRect();
+      const cx = b.left + b.width / 2;
+      const cy = b.top + b.height / 2;
+
+      if (Math.hypot(t.clientX - cx, t.clientY - cy) < 120) {
+        flee();
+      }
+    }, { passive: true });
+
+    yesBtn.addEventListener("click", () => {
+      result.textContent = "YES?! 😭 okay okay… see you on Valentine’s 💐";
+      rainHearts();
+    });
+
+    noBtn.addEventListener("click", () => {
+      result.textContent = "Ouch 😔 but I’m not giving up.";
+    });
+
+    function rainHearts() {
+      const hearts = ["💘","💖","💗","💓","💕","❤️"];
+      setInterval(() => {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+        h.style.left = Math.random() * 100 + "vw";
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 4000);
+      }, 200);
+    }
+  </script>
+</body>
+</html>
